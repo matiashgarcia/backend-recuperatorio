@@ -23,8 +23,7 @@ public class AdminProductService implements IAdminProductService {
   private AuthService authService;
 
   public Page<Product> getAll(PageRequest pageable) {
-    Long userId = authService.getLoggedUserId();
-    Page<Product> pagedResult = repository.findAllWithPageable(userId, pageable);
+    Page<Product> pagedResult = repository.findAll(pageable);
     return pagedResult;
   }
 
@@ -38,7 +37,7 @@ public class AdminProductService implements IAdminProductService {
   public Product update(ProductRequest request) throws ProductNotFoundException {
     Optional<Product> prod = repository.findById(request.getId());
     Long userId = authService.getLoggedUserId();
-    if (prod.isPresent() && prod.get().getUser_id() == userId) {
+    if (prod.isPresent()) {
       ProductRequest product = request;
       product.setUser_id(userId);
       return repository.save(new Product(product));
@@ -48,8 +47,7 @@ public class AdminProductService implements IAdminProductService {
 
   public void delete(Long id) throws ProductNotFoundException {
     Optional<Product> prod = repository.findById(id);
-    Long userId = authService.getLoggedUserId();
-    if (prod.isPresent() && prod.get().getUser_id() == userId) {
+    if (prod.isPresent()) {
       repository.deleteById(id);
     } else {
       throw new ProductNotFoundException();
