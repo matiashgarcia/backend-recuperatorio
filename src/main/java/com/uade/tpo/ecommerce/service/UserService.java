@@ -3,6 +3,8 @@ package com.uade.tpo.ecommerce.service;
 import java.util.List;
 import java.util.Optional;
 
+import javax.swing.text.html.Option;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,6 +16,7 @@ import com.uade.tpo.ecommerce.entity.dto.UserRequest;
 import com.uade.tpo.ecommerce.entity.dto.UserResponse;
 import com.uade.tpo.ecommerce.exceptions.UserDuplicateException;
 import com.uade.tpo.ecommerce.exceptions.UserNotFoundException;
+import com.uade.tpo.ecommerce.exceptions.InsufficientPrivilegesException;
 import com.uade.tpo.ecommerce.repository.UserRepository;
 
 @Service
@@ -73,6 +76,21 @@ public class UserService implements IUserService {
         .avatar_img(a.getAvatar_img())
         .role(a.getRole())
         .build();
+  }
+
+  public void deleteUserClient(Long id) throws UserNotFoundException, InsufficientPrivilegesException {
+    Optional<User> user = repository.findById(id);
+    if (user.isPresent()) {
+      User foundUser = user.get();
+      String roleName = foundUser.getRole().getName();
+      if ("buyer".equals(roleName) || "seller".equals(roleName)) {
+        repository.deleteById(id);
+      } else {
+        throw new InsufficientPrivilegesException();
+      }
+    } else {
+      throw new UserNotFoundException();
+    }
   }
 
 }

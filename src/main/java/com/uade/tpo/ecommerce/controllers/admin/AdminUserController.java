@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -19,6 +20,7 @@ import com.uade.tpo.ecommerce.entity.User;
 import com.uade.tpo.ecommerce.entity.dto.UserRequest;
 import com.uade.tpo.ecommerce.entity.dto.UserResponse;
 import com.uade.tpo.ecommerce.exceptions.UserNotFoundException;
+import com.uade.tpo.ecommerce.exceptions.InsufficientPrivilegesException;
 import com.uade.tpo.ecommerce.service.UserService;
 
 @RestController
@@ -59,6 +61,18 @@ public class AdminUserController {
   public ResponseEntity<Object> update(@RequestBody UserRequest request) throws UserNotFoundException {
     User result = service.update(request);
     return ResponseEntity.created(URI.create("/users/" + result.getId())).body(result);
+  }
+
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Object> delete(@PathVariable Long id) {
+    try {
+      service.deleteUserClient(id);
+      return ResponseEntity.ok().build();
+    } catch (UserNotFoundException e) {
+      return ResponseEntity.notFound().build();
+    } catch (InsufficientPrivilegesException e) {
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
   }
 
 }
