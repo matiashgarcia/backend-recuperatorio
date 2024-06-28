@@ -19,4 +19,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
   @Query(value = "select * from user where email = ?1", nativeQuery = true)
   Optional<User> findByEmail(String email);
 
+  @Query(value = "select * from user u where u.role_id in (select r.id from role r where r.name in ('buyer', 'seller'))", nativeQuery = true)
+  List<User> findAllClients();
+
 }

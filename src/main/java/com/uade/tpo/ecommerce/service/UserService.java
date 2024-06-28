@@ -28,6 +28,10 @@ public class UserService implements IUserService {
     return repository.findAll();
   }
 
+  public List<User> getAllClients() {
+    return repository.findAllClients();
+  }
+
   public Optional<User> getById(Long id) {
     return repository.findById(id);
   }

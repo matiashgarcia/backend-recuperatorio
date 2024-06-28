@@ -42,6 +42,11 @@ public class AdminUserController {
     return ResponseEntity.ok(service.getAll());
   }
 
+  @GetMapping("/clients")
+  public ResponseEntity<List<User>> getAllClients() {
+    return ResponseEntity.ok(service.getAllClients());
+  }
+
   @GetMapping("/{id}")
   public ResponseEntity<User> getById(@PathVariable Long id) {
     Optional<User> result = service.getById(id);
