@@ -31,7 +31,7 @@ public class SecurityConfig {
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests((requests) -> {
           requests.requestMatchers("/admin/users/logged-user-info").authenticated();
-          requests.requestMatchers("/admin/**").hasAnyAuthority(RoleEnum.seller.name());
+          requests.requestMatchers("/admin/**").hasAnyAuthority(RoleEnum.admin.name());
           requests.requestMatchers("/**").permitAll();
           requests.anyRequest().authenticated();
         })
